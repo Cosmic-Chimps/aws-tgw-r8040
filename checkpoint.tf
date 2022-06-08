@@ -45,7 +45,7 @@ BOOTSTRAP
 
   }
 
-  template_url       = "https://s3.amazonaws.com/CloudFormationTemplate/management.json"
+  template_url       = "https://cgi-cfts.s3.amazonaws.com/management/management.yaml"
   capabilities       = ["CAPABILITY_IAM"]
   disable_rollback   = true
   timeout_in_minutes = 50
@@ -119,7 +119,7 @@ resource "aws_cloudformation_stack" "checkpoint_inbound_asg_cloudformation_stack
     Shell                                    = "/bin/bash"
   }
 
-  template_url       = "https://s3.amazonaws.com/CloudFormationTemplate/autoscale.json"
+  template_url       = "https://cgi-cfts.s3.amazonaws.com/autoscale/autoscale.yaml"
   capabilities       = ["CAPABILITY_IAM"]
   disable_rollback   = true
   timeout_in_minutes = 50
