@@ -16,9 +16,9 @@ provider "aws" {
         aws_access_key_id = <ACCESS_KEY_ID>
         aws_secret_access_key = <SECRET_ACCESS_KEY
   */
-  profile = "default"
+  profile = "default" 
   region  = var.region
-  version = "~> 2.61.0"
+  
 }
 
 variable "region" {
@@ -31,7 +31,7 @@ data "aws_availability_zones" "azs" {
 # Private key
 variable "key_name" {
   description = "Must be the name of an existing EC2 KeyPair"
-  default     = "rich-lab"
+  default     = "bitso-key-west2"
 }
 
 #########################################

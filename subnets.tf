@@ -17,20 +17,27 @@ resource "aws_subnet" "management_subnet" {
 ########### Outbound VPC  ##############
 ########################################
 
-data "aws_subnet_ids" "outbound_subnet_ids" {
-  vpc_id = data.aws_vpc.data_outbound_asg_vpc.id
+# data "aws_subnets" "outbound_subnet_ids" {
+#   vpc_id = data.aws_vpc.data_outbound_asg_vpc.id
 
+#   tags = {
+#     Name = "Public subnet*"
+#   }
+
+#   depends_on = [aws_cloudformation_stack.checkpoint_tgw_cloudformation_stack]
+# }
+
+data "aws_subnets" "outbound_subnet" {
+  filter {
+    name   = "data_outbound_asg_vpc"
+    values = [data.aws_vpc.data_outbound_asg_vpc.id]
+  }
   tags = {
     Name = "Public subnet*"
   }
-
-  depends_on = [aws_cloudformation_stack.checkpoint_tgw_cloudformation_stack]
-}
-
-data "aws_subnet" "outbound_subnet" {
-  count = length(data.aws_availability_zones.azs.names)
+    #count = length(data.aws_availability_zones.azs.names)
 #   id    = data.aws_subnet_ids.outbound_subnet_ids.ids[count.index]
-    id    = tolist(data.aws_subnet_ids.outbound_subnet_ids.ids)[count.index]
+    #id    = tolist(data.aws_subnets.outbound_subnet_ids.ids)[count.index]
 
 }
 

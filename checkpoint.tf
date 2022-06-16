@@ -9,39 +9,43 @@ resource "aws_cloudformation_stack" "checkpoint_Management_cloudformation_stack"
 
   parameters = {
     VPC             = aws_vpc.management_vpc.id
-    Subnet          = aws_subnet.management_subnet.id
-    Version         = "${var.cpversion}-BYOL"
-    InstanceType    = var.management_server_size
-    Name            = "${var.project_name}-Management"
+    #Subnet          = aws_subnet.management_subnet.id
+    #Version         = "${var.cpversion}-BYOL"
+    AdminCIDR       = aws_vpc.management_vpc.cidr_block
+    ManagementSubnet= "subnet-09308e8a3d5165ac2"
+    GatewaysAddresses                        = var.outbound_cidr_vpc
+
+    #InstanceType    = var.management_server_size
+    #Name            = "${var.project_name}-Management"
     KeyName         = var.key_name
-    PasswordHash    = var.password_hash
+    #PasswordHash    = var.password_hash
     Shell           = "/bin/bash"
-    Permissions     = "Create with read-write permissions"
-    BootstrapScript = <<BOOTSTRAP
-echo ' sleep 10 ,
-clish -i -c "installer uninstall Check_Point_CPcme_Bundle_R80_40_T79.tgz last-take not-interactive" ,
-sleep 60 ,
-autoupdatercli enable CME ,
-sleep 60 ,
-autoprov-cfg -v ,
-/opt/CPcme/bin/config-community ${var.vpn_community_name} ,
-mgmt_cli -r true set access-rule layer Network rule-number 1 action "Accept" track "Log" ,
-mgmt_cli -r true add access-layer name "Inline" ,
-mgmt_cli -r true set access-rule layer Inline rule-number 1 action "Accept" track "Log" ,
-mgmt_cli -r true add access-rule layer Network position 1 name "${var.vpn_community_name} VPN Traffic Rule" vpn.directional.1.from ${var.vpn_community_name} vpn.directional.1.to ${var.vpn_community_name} vpn.directional.2.from ${var.vpn_community_name} vpn.directional.2.to External_clear action "Apply Layer" inline-layer "Inline" ,
-mgmt_cli -r true add nat-rule package standard position bottom install-on "Policy Targets" original-source All_Internet translated-source All_Internet method hide ,
-autoprov-cfg -f init AWS -mn ${var.template_management_server_name} -tn ${var.outbound_configuration_template_name} -cn tgw-controller -po Standard -otp ${var.sic_key} -r ${var.region} -ver ${var.cpversion} -iam -dt TGW ,
-autoprov-cfg -f set controller AWS -cn tgw-controller -slb ,
-autoprov-cfg -f set controller AWS -cn tgw-controller -sg -sv -com ${var.vpn_community_name} ,
-autoprov-cfg -f set template -tn ${var.outbound_configuration_template_name} -vpn -vd "" -con ${var.vpn_community_name} ,
-autoprov-cfg -f set template -tn ${var.outbound_configuration_template_name} -ia -ips -appi -av -ab ,
-autoprov-cfg -f add template -tn ${var.inbound_configuration_template_name} -otp ${var.sic_key} -ver ${var.cpversion} -po Standard -ia -ips -appi -av -ab ,
-/opt/CPvsec-R80.40/bin/cloudguard on ,
-sleep 20 ,
-init 6 ' > /etc/cloud-setup.sh ,
-chmod +x /etc/cloud-setup.sh ,
-/etc/cloud-setup.sh ,
-BOOTSTRAP
+    #Permissions     = "Create with read-write permissions"
+    #BootstrapScript = <<BOOTSTRAP
+# echo ' sleep 10 ,
+# clish -i -c "installer uninstall Check_Point_CPcme_Bundle_R80_40_T79.tgz last-take not-interactive" ,
+# sleep 60 ,
+# autoupdatercli enable CME ,
+# sleep 60 ,
+# autoprov-cfg -v ,
+# /opt/CPcme/bin/config-community ${var.vpn_community_name} ,
+# mgmt_cli -r true set access-rule layer Network rule-number 1 action "Accept" track "Log" ,
+# mgmt_cli -r true add access-layer name "Inline" ,
+# mgmt_cli -r true set access-rule layer Inline rule-number 1 action "Accept" track "Log" ,
+# mgmt_cli -r true add access-rule layer Network position 1 name "${var.vpn_community_name} VPN Traffic Rule" vpn.directional.1.from ${var.vpn_community_name} vpn.directional.1.to ${var.vpn_community_name} vpn.directional.2.from ${var.vpn_community_name} vpn.directional.2.to External_clear action "Apply Layer" inline-layer "Inline" ,
+# mgmt_cli -r true add nat-rule package standard position bottom install-on "Policy Targets" original-source All_Internet translated-source All_Internet method hide ,
+# autoprov-cfg -f init AWS -mn ${var.template_management_server_name} -tn ${var.outbound_configuration_template_name} -cn tgw-controller -po Standard -otp ${var.sic_key} -r ${var.region} -ver ${var.cpversion} -iam -dt TGW ,
+# autoprov-cfg -f set controller AWS -cn tgw-controller -slb ,
+# autoprov-cfg -f set controller AWS -cn tgw-controller -sg -sv -com ${var.vpn_community_name} ,
+# autoprov-cfg -f set template -tn ${var.outbound_configuration_template_name} -vpn -vd "" -con ${var.vpn_community_name} ,
+# autoprov-cfg -f set template -tn ${var.outbound_configuration_template_name} -ia -ips -appi -av -ab ,
+# autoprov-cfg -f add template -tn ${var.inbound_configuration_template_name} -otp ${var.sic_key} -ver ${var.cpversion} -po Standard -ia -ips -appi -av -ab ,
+# /opt/CPvsec-R80.40/bin/cloudguard on ,
+# sleep 20 ,
+# init 6 ' > /etc/cloud-setup.sh ,
+# chmod +x /etc/cloud-setup.sh ,
+# /etc/cloud-setup.sh ,
+# BOOTSTRAP
 
   }
 
