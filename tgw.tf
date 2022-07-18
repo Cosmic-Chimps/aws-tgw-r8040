@@ -5,7 +5,7 @@
 # Create the TGW
 resource "aws_ec2_transit_gateway" "transit_gateway" {
   description                     = var.project_name
-  auto_accept_shared_attachments  = "enable"
+  auto_accept_shared_attachments  = "disable"
   default_route_table_association = "disable"
   default_route_table_propagation = "disable"
   tags = {
